@@ -30,7 +30,7 @@ internal object JvmResources {
                 for (childIndex in 0 until children.length) {
                     val child = children.item(childIndex)
                     if (child.attributes?.getNamedItem("quantity")?.nodeValue == wanted) {
-                        return String.format(child.textContent.replace(Regex("%\\d+\\$"), "%"), quantity)
+                        return String.format(child.textContent.androidStringValue().replace(Regex("%\\d+\\$"), "%"), quantity)
                     }
                 }
             }
@@ -54,9 +54,44 @@ internal object JvmResources {
             buildMap {
                 for (index in 0 until nodes.length) {
                     val node = nodes.item(index)
-                    put(node.attributes.getNamedItem("name").nodeValue, node.textContent)
+                    put(node.attributes.getNamedItem("name").nodeValue, node.textContent.androidStringValue())
                 }
             }
         }
     }.getOrDefault(emptyMap())
+}
+
+/** Decode Android XML string escapes on JVM, where no aapt resource compiler is present. */
+internal fun String.androidStringValue(): String {
+    val normalized = replace(Regex("\\s*\n\\s*"), " ").trim()
+    return buildString(normalized.length) {
+        var index = 0
+        while (index < normalized.length) {
+            val current = normalized[index]
+            if (current != '\\' || index == normalized.lastIndex) {
+                append(current)
+                index++
+                continue
+            }
+            when (val escaped = normalized[index + 1]) {
+                'n' -> append('\n')
+                'r' -> append('\r')
+                't' -> append('\t')
+                '\\' -> append('\\')
+                '\'' -> append('\'')
+                '"' -> append('"')
+                'u' -> {
+                    val end = index + 6
+                    val code = normalized.substring(index + 2, end.coerceAtMost(normalized.length))
+                    if (end <= normalized.length && code.length == 4) {
+                        code.toIntOrNull(16)?.let { append(it.toChar()) } ?: append("\\u$code")
+                        index = end
+                        continue
+                    } else append("\\u")
+                }
+                else -> append(escaped)
+            }
+            index += 2
+        }
+    }
 }

@@ -16,6 +16,9 @@ kotlin {
             dependencies { implementation(libs.appCompatResources) }
         }
         val jvmMain by getting
+        val jvmTest by getting {
+            dependencies { implementation(kotlin("test")) }
+        }
         val appleMain by creating { dependsOn(commonMain) }
         val iosMain by creating { dependsOn(appleMain) }
         iosX64Main.get().dependsOn(iosMain)
