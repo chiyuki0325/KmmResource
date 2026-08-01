@@ -76,12 +76,17 @@ private fun setupAndroidGenerator(
 
     setAssetsDirsRefresh(project)
 
-    AndroidMRGenerator(
+    val generationTask = AndroidMRGenerator(
         generatedDir = settings.generatedDir,
         sourceSet = createSourceSet(androidSourceSet, sourceSet),
         settings = settings,
         generators = features.map { it.createAndroidGenerator() },
     ).apply(project)
+
+    project.tasks.matching { task ->
+        task != generationTask && task.name.contains("Resources", ignoreCase = true) &&
+            listOf("process", "merge", "package", "compile", "map").any { task.name.startsWith(it) }
+    }.configureEach { it.dependsOn(generationTask) }
 }
 
 private fun setAssetsDirsRefresh(project: Project) {

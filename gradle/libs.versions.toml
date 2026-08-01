@@ -1,8 +1,8 @@
 [versions]
-agp = "8.2.0"
-kotlin = "1.9.20"
-compose = "1.5.4"
-compose-compiler = "1.5.4"
+agp = "8.13.2"
+kotlin = "2.1.20"
+compose = "1.8.2"
+compose-compiler = "2.1.20"
 compose-material3 = "1.1.2"
 androidx-activityCompose = "1.8.0"
 # android
@@ -14,18 +14,18 @@ kotlinxSerializationVersion = "1.5.0"
 kotlinxCoroutinesVersion = "1.6.4"
 kotlinVersion="1.9.20"
 
-compose-ohos = "1.6.1-KBA-001"
-compose-common = "1.6.1"
+compose-ohos = "1.8.2"
+compose-common = "1.8.2"
 
-overrideComposeVersion = "1.6.1-KBA-001"
+overrideComposeVersion = "1.8.2"
 
 tkmm = "1.9.23-dev-5"
 kotlinPoetVersion = "1.13.1"
 
-jetbrainsKotlinJvm = "1.9.0"
+jetbrainsKotlinJvm = "2.1.20"
 commonsCodecVersion = "1.15"
 apacheCommonsTextVersion = "1.10.0"
-androidGradleVersion = "7.4.2"
+androidGradleVersion = "8.13.2"
 androidSdkCommonVersion = "31.0.0"
 composeGradleVersion = "1.0"
 knoi = "0.2.22"
@@ -84,4 +84,4 @@ kotlinCocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = 
 composeOhos = { id = "org.jetbrains.compose", version.ref = "compose-ohos" }
 jetbrainsKotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
 composeGradle = { id = "com.tencent.tmm.kmmgradle", version.ref = "composeGradleVersion" }
-composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version = "2.0.21-KBA-003" }
+composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version = "2.1.20" }

@@ -9,6 +9,7 @@ import com.tencent.tmm.kmmgradle.configuration.configureAppleTargetGenerator
 import com.tencent.tmm.kmmgradle.configuration.getAndroidRClassPackage
 import com.tencent.tmm.kmmgradle.configuration.setupCommonTarget
 import com.tencent.tmm.kmmgradle.configuration.setupOhosGenerator
+import com.tencent.tmm.kmmgradle.configuration.setupJvmGenerator
 import com.tencent.tmm.kmmgradle.generator.AssetsGenerator
 import com.tencent.tmm.kmmgradle.generator.ColorsGenerator
 import com.tencent.tmm.kmmgradle.generator.FilesGenerator
@@ -213,8 +214,15 @@ class MultiplatformResourcesPlugin : Plugin<Project> {
                 features
             )
 
+            KotlinPlatformType.jvm -> setupJvmGenerator(
+                kotlinTarget,
+                mrSettings.generatedDir,
+                mrSettings,
+                features,
+                project,
+            )
+
             KotlinPlatformType.js,
-            KotlinPlatformType.jvm,
             KotlinPlatformType.wasm -> project.project.logger.warn("js jvm wasm target not supported by Resources now")
 
         }

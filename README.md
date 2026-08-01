@@ -1,5 +1,7 @@
 # KMM Multiplatform Resource Management Solution
 
+> NEUPass fork: adds first-class JVM Desktop generation/runtime/Compose support while retaining Android, iOS, and OHOS source implementations. Enabled targets use standard Kotlin 2.1.20. OHOS target registration remains disabled until its custom toolchain is ready, but OHOS code must stay aligned; see `AGENTS.md`.
+
 [中文README](./README中文.md)
 
 This project implements a cross-platform native resource management solution using **Kotlin Multiplatform (KMP)** technology, supporting Android, iOS, and HarmonyOS platforms. It generates type-safe resource access classes (e.g., `MR` class) during compilation, providing compile-time validation and unified resource management across platforms through standardized encapsulation mechanisms (Kotlin/Native klib & Kotlin/JVM aar).
@@ -21,6 +23,12 @@ The KMM resource manager fundamentally exposes platform-specific resource identi
 | @kuiklybase/resource_compose | 0.0.1 | 0.0.1 |
 
 ## Gradle Integration
+
+### JVM Desktop
+
+The fork recognizes Kotlin JVM targets and generates a JVM `actual MR` class. Generated strings, plurals, colors, images, fonts, files, and assets are packaged into the JVM classpath. `resource-compose` provides Desktop implementations for strings, colors, fonts, and images.
+
+Validated targets: Android and JVM Desktop. iOS requires macOS validation. OHOS sources are retained but its target is currently disabled.
 
 ### KMM Project Setup
 

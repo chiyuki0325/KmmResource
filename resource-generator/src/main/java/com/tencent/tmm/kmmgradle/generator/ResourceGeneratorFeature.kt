@@ -10,6 +10,7 @@ interface ResourceGeneratorFeature<T : MRGenerator.Generator> {
 
     fun createOhosGenerator(): T
 
+    fun createJvmGenerator(): T = createOhosGenerator()
+
     fun createIosGenerator(): T
 }
-
