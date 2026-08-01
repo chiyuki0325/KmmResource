@@ -5,6 +5,14 @@ import kotlin.test.assertEquals
 
 class JvmStringResourceTest {
     @Test
+    fun searchesGeneratedRawfileFallback() {
+        assertEquals(
+            listOf("fonts/example.ttf", "rawfile/fonts/example.ttf"),
+            resourceCandidates("/fonts/example.ttf"),
+        )
+    }
+
+    @Test
     fun decodesAndroidEscapesAndFormattingWhitespace() {
         val source = """
             first\n

@@ -5,7 +5,8 @@ import javax.xml.parsers.DocumentBuilderFactory
 
 internal object JvmResources {
     private val loader = Thread.currentThread().contextClassLoader ?: JvmResources::class.java.classLoader
-    fun stream(path: String): InputStream = loader.getResourceAsStream(path.removePrefix("/"))
+    fun stream(path: String): InputStream = resourceCandidates(path)
+        .firstNotNullOfOrNull(loader::getResourceAsStream)
         ?: error("Resource not found: $path")
     fun bytes(path: String): ByteArray = stream(path).use { it.readBytes() }
     fun text(path: String): String = bytes(path).decodeToString()
@@ -59,6 +60,11 @@ internal object JvmResources {
             }
         }
     }.getOrDefault(emptyMap())
+}
+
+internal fun resourceCandidates(path: String): List<String> {
+    val normalized = path.removePrefix("/")
+    return listOf(normalized, "rawfile/$normalized").distinct()
 }
 
 /** Decode Android XML string escapes on JVM, where no aapt resource compiler is present. */
