@@ -29,6 +29,8 @@ int ohos_get_string_plural_by_name(const char *resName, uint32_t num, char **res
 int ohos_get_image_base64_by_name(const char *resName, char **resultValue, uint64_t *resultLen,
                                   uint32_t density);
 
+int ohos_get_raw_file(const char *fileName, uint64_t *fileLen, uint8_t **fileData);
+
 
 #ifdef __cplusplus
 }

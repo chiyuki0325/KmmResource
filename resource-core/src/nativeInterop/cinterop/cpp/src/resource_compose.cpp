@@ -7,6 +7,7 @@
 #include "resourcemanager/ohresmgr.h"
 #include "rawfile/raw_file_manager.h"
 #include "resource_compose.h"
+#include <cstdlib>
 
 const NativeResourceManager *nativeResourceManager = nullptr;
 
@@ -49,3 +50,22 @@ int ohos_get_image_base64_by_name(const char *resName, char **resultValue, uint6
     return code;
 }
 
+int ohos_get_raw_file(const char *fileName, uint64_t *fileLen, uint8_t **fileData) {
+    RawFile *rawFile = OH_ResourceManager_OpenRawFile(nativeResourceManager, fileName);
+    if (rawFile == nullptr) return -1;
+    const long size = OH_ResourceManager_GetRawFileSize(rawFile);
+    if (size < 0) {
+        OH_ResourceManager_CloseRawFile(rawFile);
+        return -2;
+    }
+    auto *buffer = static_cast<uint8_t *>(malloc(static_cast<size_t>(size)));
+    const int readSize = OH_ResourceManager_ReadRawFile(rawFile, buffer, static_cast<size_t>(size));
+    OH_ResourceManager_CloseRawFile(rawFile);
+    if (readSize < 0) {
+        free(buffer);
+        return -3;
+    }
+    *fileLen = static_cast<uint64_t>(readSize);
+    *fileData = buffer;
+    return 0;
+}

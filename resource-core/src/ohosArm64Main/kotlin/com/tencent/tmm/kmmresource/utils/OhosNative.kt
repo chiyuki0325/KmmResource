@@ -2,6 +2,7 @@ package com.tencent.tmm.kmmresource.utils
 
 import com.tencent.tmm.kmmresource.ohos_get_color_by_name
 import com.tencent.tmm.kmmresource.ohos_get_image_base64_by_name
+import com.tencent.tmm.kmmresource.ohos_get_raw_file
 import com.tencent.tmm.kmmresource.ohos_get_media_by_name
 import com.tencent.tmm.kmmresource.ohos_get_string_by_name
 import com.tencent.tmm.kmmresource.ohos_get_string_plural_by_name
@@ -48,6 +49,18 @@ internal fun processMediaInfo(mediaName: String): ByteArray? {
         }
 
     }
+}
+
+@OptIn(ExperimentalForeignApi::class)
+internal fun processRawFile(fileName: String): ByteArray? = memScoped {
+    val fileLen = alloc<uint64_tVar>()
+    val fileData = alloc<CPointerVar<uint8_tVar>>()
+    val resultCode = ohos_get_raw_file(fileName, fileLen.ptr, fileData.ptr)
+    if (resultCode != 0) return null
+    val result = ByteArray(fileLen.value.toInt())
+    result.usePinned { memcpy(it.addressOf(0), fileData.value, fileLen.value) }
+    free(fileData.value)
+    result
 }
 
 /**
