@@ -17,8 +17,8 @@ actual fun painterResource(resource: ImageResource): Painter = remember(resource
     val bitmap = if (resource.suffix.equals("svg", ignoreCase = true)) {
         val dom = SVGDOM(Data.makeFromBytes(bytes))
         val viewBox = dom.root?.viewBox
-        val width = (viewBox?.width ?: 24f).toInt().coerceAtLeast(1) * 4
-        val height = (viewBox?.height ?: 24f).toInt().coerceAtLeast(1) * 4
+        val width = (viewBox?.width ?: 24f).toInt().coerceAtLeast(1)
+        val height = (viewBox?.height ?: 24f).toInt().coerceAtLeast(1)
         dom.setContainerSize(width.toFloat(), height.toFloat())
         val surface = Surface.makeRasterN32Premul(width, height)
         dom.render(surface.canvas)
