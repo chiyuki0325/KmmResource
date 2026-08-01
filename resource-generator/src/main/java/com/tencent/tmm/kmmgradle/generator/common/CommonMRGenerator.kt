@@ -58,5 +58,8 @@ class CommonMRGenerator(
             .configureEach {
                 it.dependsOn(generationTask)
             }
+        project.tasks
+            .matching { it.name.endsWith("ProcessResources") }
+            .configureEach { it.dependsOn(generationTask) }
     }
 }
