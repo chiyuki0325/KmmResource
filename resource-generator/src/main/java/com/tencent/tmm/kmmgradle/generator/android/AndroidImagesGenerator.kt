@@ -24,7 +24,7 @@ import kotlin.reflect.full.functions
 
 class AndroidImagesGenerator(
     inputFileTree: FileTree,
-    private val getAndroidRClassPackage: () -> String,
+    private val androidRClassPackage: String,
     private val logger: Logger,
     private val mrSettings: MRGenerator.MRSettings
 ) : ImagesGenerator(inputFileTree), ObjectBodyExtendable by NOPObjectBodyExtendable() {
@@ -38,7 +38,7 @@ class AndroidImagesGenerator(
     }
 
     override fun getImports(): List<ClassName> = listOf(
-        ClassName(getAndroidRClassPackage(), "R")
+        ClassName(androidRClassPackage, "R")
     )
 
     override fun generateResources(

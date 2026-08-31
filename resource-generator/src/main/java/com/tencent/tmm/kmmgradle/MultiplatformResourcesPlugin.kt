@@ -121,9 +121,13 @@ class MultiplatformResourcesPlugin : Plugin<Project> {
             androidRClassPackage = project.getAndroidRClassPackage()
         )
 
+        val commonResourceDirectories = commonResources.sourceDirectories.files
+            .filterNot { it.toPath().startsWith(generatedDir.toPath()) }
+            .toSet()
         val sourceInfo = SourceInfo(
             generatedDir,
-            commonResources,
+            project.files(commonResourceDirectories).asFileTree,
+            commonResourceDirectories,
             mrExtension.multiplatformResourcesPackage!!,
             mrSettings.androidRClassPackage
         )

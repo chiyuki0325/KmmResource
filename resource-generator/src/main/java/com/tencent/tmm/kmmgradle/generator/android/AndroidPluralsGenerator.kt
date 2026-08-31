@@ -21,7 +21,7 @@ import java.io.File
 class AndroidPluralsGenerator(
     pluralsFileTree: FileTree,
     strictLineBreaks: Boolean,
-    private val getAndroidRClassPackage: () -> String,
+    private val androidRClassPackage: String,
     private val mrSettings: MRGenerator.MRSettings
 ) : PluralsGenerator(pluralsFileTree, strictLineBreaks),
     ObjectBodyExtendable by NOPObjectBodyExtendable() {
@@ -33,7 +33,7 @@ class AndroidPluralsGenerator(
         CodeBlock.of("PluralsResource(R.plurals.%L)", processKey(key))
 
     override fun getImports(): List<ClassName> = listOf(
-        ClassName(getAndroidRClassPackage(), "R")
+        ClassName(androidRClassPackage, "R")
     )
 
     override fun generateResources(

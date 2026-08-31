@@ -133,7 +133,7 @@ abstract class FontsGenerator(
 
         override fun createAndroidGenerator() = AndroidFontsGenerator(
             inputFileTree = stringsFileTree,
-            getAndroidRClassPackage = { requireNotNull(info.androidRClassPackage) },
+            androidRClassPackage = requireNotNull(info.androidRClassPackage),
             mrSettings
         )
 

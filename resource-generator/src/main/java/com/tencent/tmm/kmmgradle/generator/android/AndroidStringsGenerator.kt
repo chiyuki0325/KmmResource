@@ -20,7 +20,7 @@ import java.io.File
 class AndroidStringsGenerator(
     stringsFileTree: FileTree,
     strictLineBreaks: Boolean,
-    private val getAndroidRClassPackage: () -> String,
+    private val androidRClassPackage: String,
     private val mrSettings: MRGenerator.MRSettings
 ) : StringsGenerator(stringsFileTree, strictLineBreaks),
     ObjectBodyExtendable by NOPObjectBodyExtendable() {
@@ -33,7 +33,7 @@ class AndroidStringsGenerator(
         CodeBlock.of("StringResource(R.string.%L)", processKey(key))
 
     override fun getImports(): List<ClassName> = listOf(
-        ClassName(getAndroidRClassPackage(), "R")
+        ClassName(androidRClassPackage, "R")
     )
 
     override fun generateResources(

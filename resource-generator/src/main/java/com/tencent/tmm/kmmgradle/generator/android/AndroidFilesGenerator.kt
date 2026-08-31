@@ -17,7 +17,7 @@ import java.util.Locale
 
 class AndroidFilesGenerator(
     inputFileTree: FileTree,
-    private val getAndroidRClassPackage: () -> String,
+    private val androidRClassPackage: String,
     private val mrSettings: MRGenerator.MRSettings
 ) : FilesGenerator(inputFileTree), ObjectBodyExtendable by NOPObjectBodyExtendable() {
     override fun getClassModifiers(): Array<KModifier> = arrayOf(KModifier.ACTUAL)
@@ -28,7 +28,7 @@ class AndroidFilesGenerator(
         CodeBlock.of("FileResource(rawResId = R.raw.%L)", keyToResourceId(fileSpec.key))
 
     override fun getImports() = listOf(
-        ClassName(getAndroidRClassPackage(), "R")
+        ClassName(androidRClassPackage, "R")
     )
 
     override fun generateResources(

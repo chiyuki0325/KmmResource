@@ -109,7 +109,7 @@ abstract class PluralsGenerator(
             AndroidPluralsGenerator(
                 pluralsFileTree = stringsFileTree,
                 strictLineBreaks = strictLineBreaks,
-                getAndroidRClassPackage = { requireNotNull(info.androidRClassPackage) },
+                androidRClassPackage = requireNotNull(info.androidRClassPackage),
                 mrSettings
             )
 

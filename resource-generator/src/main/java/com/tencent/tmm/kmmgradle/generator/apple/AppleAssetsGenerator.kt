@@ -9,12 +9,11 @@ import com.squareup.kotlinpoet.KModifier
 import com.tencent.tmm.kmmgradle.generator.AssetsGenerator
 import com.tencent.tmm.kmmgradle.generator.ObjectBodyExtendable
 import com.tencent.tmm.kmmgradle.utils.Constants
-import org.gradle.api.file.SourceDirectorySet
 import java.io.File
 
 class AppleAssetsGenerator(
-    sourceDirectorySet: SourceDirectorySet
-) : AssetsGenerator(sourceDirectorySet), ObjectBodyExtendable by AppleGeneratorHelper() {
+    sourceDirectories: Set<File>
+) : AssetsGenerator(sourceDirectories), ObjectBodyExtendable by AppleGeneratorHelper() {
 
     override fun getClassModifiers(): Array<KModifier> = arrayOf(KModifier.ACTUAL)
 

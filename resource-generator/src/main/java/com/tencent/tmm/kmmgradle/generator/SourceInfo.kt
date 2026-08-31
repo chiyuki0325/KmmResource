@@ -4,12 +4,13 @@
 
 package com.tencent.tmm.kmmgradle.generator
 
-import org.gradle.api.file.SourceDirectorySet
+import org.gradle.api.file.FileTree
 import java.io.File
 
 data class SourceInfo(
     val generatedDir: File,
-    val commonResources: SourceDirectorySet,
+    val commonResources: FileTree,
+    val commonResourceDirectories: Set<File>,
     val mrClassPackage: String,
     var androidRClassPackage: String? = null
 )

@@ -8,11 +8,11 @@ import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.KModifier
 import com.tencent.tmm.kmmgradle.generator.AssetsGenerator
 import com.tencent.tmm.kmmgradle.generator.ObjectBodyExtendable
-import org.gradle.api.file.SourceDirectorySet
+import java.io.File
 
 class CommonAssetsGenerator(
-    sourceDirectorySet: SourceDirectorySet
-) : AssetsGenerator(sourceDirectorySet), ObjectBodyExtendable by CommonObjectBodyExtendable() {
+    sourceDirectories: Set<File>
+) : AssetsGenerator(sourceDirectories), ObjectBodyExtendable by CommonObjectBodyExtendable() {
 
     override fun getClassModifiers(): Array<KModifier> = emptyArray()
 

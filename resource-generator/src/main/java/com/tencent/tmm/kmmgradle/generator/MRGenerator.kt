@@ -22,12 +22,13 @@ import java.io.File
 
 abstract class MRGenerator(
     generatedDir: File,
-    protected val sourceSet: SourceSet,
+    @Transient protected val sourceSet: SourceSet,
     protected val mrSettings: MRSettings,
     internal val generators: List<Generator>
 ) {
 
-    internal val outputDir = File(generatedDir, sourceSet.name)
+    protected val sourceSetName = sourceSet.name
+    internal val outputDir = File(generatedDir, sourceSetName)
     protected open val sourcesGenerationDir
         get() = File(outputDir, "src")
     protected open val resourcesGenerationDir
@@ -37,17 +38,12 @@ abstract class MRGenerator(
         get() = File(outputDir, AssetsGenerator.ASSETS_DIR_NAME)
 
     init {
-        setupGenerationDirs()
+        setupGenerationDirs(sourceSet)
     }
 
-    private fun setupGenerationDirs() {
-        sourcesGenerationDir.mkdirs()
+    private fun setupGenerationDirs(sourceSet: SourceSet) {
         sourceSet.addSourceDir(sourcesGenerationDir)
-
-        resourcesGenerationDir.mkdirs()
         sourceSet.addResourcesDir(resourcesGenerationDir)
-
-        assetsGenerationDir.mkdirs()
         sourceSet.addAssetsDir(assetsGenerationDir)
     }
 
@@ -99,8 +95,7 @@ abstract class MRGenerator(
     }
 
     fun apply(project: Project): GenerateMultiplatformResourcesTask {
-        val name = sourceSet.name
-        val genTaskName = "generateMR$name"
+        val genTaskName = "generateMR$sourceSetName"
         val genTask = runCatching {
             project.tasks.getByName(genTaskName) as GenerateMultiplatformResourcesTask
         }.getOrNull() ?: project.tasks.create(
@@ -170,7 +165,7 @@ abstract class MRGenerator(
         val isStrictLineBreaks: Boolean,
         val generatedDir: File,
         val iosLocalizationRegion: String?,
-        val commonSourceSet: KotlinSourceSet,
+        @Transient val commonSourceSet: KotlinSourceSet,
         val androidRClassPackage: String?
     )
 }

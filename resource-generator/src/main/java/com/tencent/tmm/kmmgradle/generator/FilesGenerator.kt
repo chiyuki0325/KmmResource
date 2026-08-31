@@ -103,7 +103,7 @@ abstract class FilesGenerator(
 
         override fun createAndroidGenerator() = AndroidFilesGenerator(
             inputFileTree = fileTree,
-            getAndroidRClassPackage = { requireNotNull(info.androidRClassPackage) },
+            androidRClassPackage = requireNotNull(info.androidRClassPackage),
             mrSettings
         )
 

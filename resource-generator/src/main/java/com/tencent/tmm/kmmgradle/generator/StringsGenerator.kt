@@ -81,7 +81,7 @@ abstract class StringsGenerator(
         override fun createAndroidGenerator() = AndroidStringsGenerator(
             stringsFileTree = stringsFileTree,
             strictLineBreaks = strictLineBreaks,
-            getAndroidRClassPackage = { requireNotNull(info.androidRClassPackage) },
+            androidRClassPackage = requireNotNull(info.androidRClassPackage),
             mrSettings
         )
 

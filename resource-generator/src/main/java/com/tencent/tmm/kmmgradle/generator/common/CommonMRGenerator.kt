@@ -5,7 +5,6 @@
 package com.tencent.tmm.kmmgradle.generator.common
 
 import com.squareup.kotlinpoet.KModifier
-import com.tencent.tmm.kmmgradle.MultiplatformResourcesPluginExtension
 import com.tencent.tmm.kmmgradle.generator.MRGenerator
 import com.tencent.tmm.kmmgradle.utils.CommonUtils
 import org.gradle.api.Project
@@ -16,7 +15,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import java.io.File
 
 class CommonMRGenerator(
-    val project: Project,
+    private val commonMRKModifiers: Array<KModifier>,
     generatedDir: File,
     sourceSet: SourceSet,
     mrSettings: MRSettings,
@@ -28,16 +27,13 @@ class CommonMRGenerator(
     generators = generators
 ) {
 
-    override fun getMRClassModifiers(): Array<KModifier> {
-        val mrExtension = project.extensions.getByType(MultiplatformResourcesPluginExtension::class.java)
-        return mrExtension.commonMRKModifiers
-    }
+    override fun getMRClassModifiers(): Array<KModifier> = commonMRKModifiers
 
     override fun apply(generationTask: Task, project: Project) {
         CommonUtils.setupTaskExecutable(generationTask)
         project.tasks
             .withType<KotlinCompile<*>>()
-            .matching { it.name.contains(sourceSet.name, ignoreCase = true) }
+            .matching { it.name.contains(sourceSetName, ignoreCase = true) }
             .configureEach { it.dependsOn(generationTask) }
 
         project.tasks.withType<Jar>().configureEach {

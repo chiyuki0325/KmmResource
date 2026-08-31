@@ -13,14 +13,14 @@ import com.tencent.tmm.kmmgradle.generator.android.AndroidAssetsGenerator
 import com.tencent.tmm.kmmgradle.generator.apple.AppleAssetsGenerator
 import com.tencent.tmm.kmmgradle.generator.common.CommonAssetsGenerator
 import com.tencent.tmm.kmmgradle.generator.ohos.OhosAssetsGenerator
-import org.gradle.api.file.SourceDirectorySet
 import java.io.File
 
 @Suppress("TooManyFunctions")
 abstract class AssetsGenerator(
-    private val sourceDirectorySet: SourceDirectorySet
+    private val sourceDirectories: Set<File>
 ) : MRGenerator.Generator {
-    override val inputFiles: Iterable<File> = sourceDirectorySet.files
+    override val inputFiles: Iterable<File>
+        get() = sourceDirectories.flatMap { File(it, RES_ROOT).walkTopDown().filter(File::isFile).toList() }
     override val mrObjectName: String = ASSETS_DIR_NAME
     override val resourceClassName =
         ClassName("com.tencent.tmm.kmmresource.resource", "AssetResource")
@@ -89,7 +89,7 @@ abstract class AssetsGenerator(
         resourcesGenerationDir: File,
         objectBuilder: TypeSpec.Builder
     ): TypeSpec {
-        val rootContent = parseRootContent(sourceDirectorySet.sourceDirectories.files)
+        val rootContent = parseRootContent(sourceDirectories)
 
         beforeGenerate(objectBuilder, rootContent)
 
@@ -177,19 +177,21 @@ abstract class AssetsGenerator(
         private val mrSettings: MRGenerator.MRSettings
     ) : ResourceGeneratorFeature<AssetsGenerator> {
 
-        override fun createCommonGenerator() = CommonAssetsGenerator(info.commonResources)
+        private val sourceDirectories = info.commonResourceDirectories
+
+        override fun createCommonGenerator() = CommonAssetsGenerator(sourceDirectories)
 
 
         override fun createAndroidGenerator() = AndroidAssetsGenerator(
-            info.commonResources,
+            sourceDirectories,
             mrSettings
         )
 
         override fun createOhosGenerator(): AssetsGenerator =
-            OhosAssetsGenerator(info.commonResources, mrSettings)
+            OhosAssetsGenerator(sourceDirectories, mrSettings)
 
         override fun createIosGenerator(): AssetsGenerator =
-            AppleAssetsGenerator(info.commonResources)
+            AppleAssetsGenerator(sourceDirectories)
     }
 
     companion object {

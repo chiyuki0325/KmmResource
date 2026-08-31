@@ -46,7 +46,7 @@ private fun setupCommonGenerator(
 ): GenerateMultiplatformResourcesTask {
     val commonGeneratorSourceSet: MRGenerator.SourceSet = createSourceSet(commonSourceSet)
     return CommonMRGenerator(
-        target,
+        target.extensions.getByType<MultiplatformResourcesPluginExtension>().commonMRKModifiers,
         generatedDir,
         commonGeneratorSourceSet,
         mrSettings,

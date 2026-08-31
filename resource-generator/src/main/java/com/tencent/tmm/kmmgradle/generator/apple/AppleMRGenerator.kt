@@ -134,7 +134,7 @@ class AppleMRGenerator(
 
         // tasks like compileIosMainKotlinMetadata when only one target enabled
         generationTask.project.tasks.withType<KotlinCommonCompile>()
-            .matching { it.name.contains(sourceSet.name, ignoreCase = true) }
+            .matching { it.name.contains(sourceSetName, ignoreCase = true) }
             .configureEach { it.dependsOn(generationTask) }
 
         compileTask.doLast(

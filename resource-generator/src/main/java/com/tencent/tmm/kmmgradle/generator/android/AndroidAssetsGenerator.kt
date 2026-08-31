@@ -10,13 +10,12 @@ import com.tencent.tmm.kmmgradle.generator.AssetsGenerator
 import com.tencent.tmm.kmmgradle.generator.MRGenerator
 import com.tencent.tmm.kmmgradle.generator.NOPObjectBodyExtendable
 import com.tencent.tmm.kmmgradle.generator.ObjectBodyExtendable
-import org.gradle.api.file.SourceDirectorySet
 import java.io.File
 
 class AndroidAssetsGenerator(
-    sourceDirectorySet: SourceDirectorySet,
+    sourceDirectories: Set<File>,
     private val mrSettings: MRGenerator.MRSettings
-) : AssetsGenerator(sourceDirectorySet), ObjectBodyExtendable by NOPObjectBodyExtendable() {
+) : AssetsGenerator(sourceDirectories), ObjectBodyExtendable by NOPObjectBodyExtendable() {
 
     override fun generateResources(
         assetsGenerationDir: File,
