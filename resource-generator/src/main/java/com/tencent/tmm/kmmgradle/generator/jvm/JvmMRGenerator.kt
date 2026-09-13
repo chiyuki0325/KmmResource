@@ -14,10 +14,6 @@ class JvmMRGenerator(
     override fun getMRClassModifiers(): Array<KModifier> = arrayOf(KModifier.ACTUAL)
 
     override fun apply(generationTask: Task, project: Project) {
-        project.tasks.matching {
-            it.name.contains("jvm", ignoreCase = true) &&
-                (it.name.contains("compile", true) || it.name.contains("processResources", true))
-        }.configureEach { it.dependsOn(generationTask) }
         project.tasks.matching { it.name.endsWith("ProcessResources") }
             .configureEach { it.dependsOn(generationTask) }
     }

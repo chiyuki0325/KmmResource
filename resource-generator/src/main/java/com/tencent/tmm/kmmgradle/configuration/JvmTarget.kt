@@ -15,17 +15,20 @@ fun setupJvmGenerator(
     features: List<ResourceGeneratorFeature<out MRGenerator.Generator>>,
     project: Project,
 ) {
-    val sourceSet = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).defaultSourceSet
+    val compilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+    val sourceSet = compilation.defaultSourceSet
     val generatorSourceSet = object : MRGenerator.SourceSet {
         override val name: String = sourceSet.name
         override fun addSourceDir(directory: File) { sourceSet.kotlin.srcDir(directory) }
         override fun addResourcesDir(directory: File) { sourceSet.resources.srcDir(directory) }
         override fun addAssetsDir(directory: File) { sourceSet.resources.srcDir(directory) }
     }
-    JvmMRGenerator(
+    val generationTask = JvmMRGenerator(
         generatedDir,
         generatorSourceSet,
         mrSettings,
         features.map { it.createJvmGenerator() },
     ).apply(project)
+
+    compilation.compileTaskProvider.configure { it.dependsOn(generationTask) }
 }

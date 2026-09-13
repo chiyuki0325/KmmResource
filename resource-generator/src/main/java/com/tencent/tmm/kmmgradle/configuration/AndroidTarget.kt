@@ -37,6 +37,7 @@ internal fun configureAndroidTargetGenerator(
     ).forEach { id ->
         project.plugins.withId(id) {
             setupAndroidGenerator(
+                target = target,
                 settings = settings,
                 features = features,
                 sourceSet = kotlinSourceSet,
@@ -63,6 +64,7 @@ internal fun Project.getAndroidRClassPackage(): String? {
 @Suppress("LongParameterList")
 private fun setupAndroidGenerator(
     project: Project,
+    target: KotlinTarget,
     settings: MRGenerator.MRSettings,
     sourceSet: KotlinSourceSet,
     features: List<ResourceGeneratorFeature<out MRGenerator.Generator>>,
@@ -82,6 +84,10 @@ private fun setupAndroidGenerator(
         settings = settings,
         generators = features.map { it.createAndroidGenerator() },
     ).apply(project)
+
+    target.compilations.configureEach { compilation ->
+        compilation.compileTaskProvider.configure { it.dependsOn(generationTask) }
+    }
 
     project.tasks.matching { task ->
         task != generationTask && task.name.contains("Resources", ignoreCase = true) &&
