@@ -3,12 +3,18 @@ plugins {
     alias(libs.plugins.androidLibrary)
 }
 
+val hasKotlinNativeHostDistribution =
+    !System.getProperty("os.name").lowercase().contains("linux") ||
+        System.getProperty("os.arch").lowercase() !in setOf("aarch64", "arm64")
+
 kotlin {
     androidTarget()
     jvm()
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
+    if (hasKotlinNativeHostDistribution) {
+        iosX64()
+        iosArm64()
+        iosSimulatorArm64()
+    }
 
     sourceSets {
         val commonMain by getting
@@ -19,11 +25,13 @@ kotlin {
         val jvmTest by getting {
             dependencies { implementation(kotlin("test")) }
         }
-        val appleMain by creating { dependsOn(commonMain) }
-        val iosMain by creating { dependsOn(appleMain) }
-        iosX64Main.get().dependsOn(iosMain)
-        iosArm64Main.get().dependsOn(iosMain)
-        iosSimulatorArm64Main.get().dependsOn(iosMain)
+        if (hasKotlinNativeHostDistribution) {
+            val appleMain by creating { dependsOn(commonMain) }
+            val iosMain by creating { dependsOn(appleMain) }
+            iosX64Main.get().dependsOn(iosMain)
+            iosArm64Main.get().dependsOn(iosMain)
+            iosSimulatorArm64Main.get().dependsOn(iosMain)
+        }
         // ohosArm64Main remains in source control. Re-enable with the
         // KuiklyBase 2.0.21-KBA-003 toolchain and KNOI plugin.
     }
