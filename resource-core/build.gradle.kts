@@ -21,7 +21,9 @@ kotlin {
         val androidMain by getting {
             dependencies { implementation(libs.appCompatResources) }
         }
-        val jvmMain by getting
+        val jvmMain by getting {
+            dependencies { implementation(libs.kotlinxSerialization) }
+        }
         val jvmTest by getting {
             dependencies { implementation(kotlin("test")) }
         }

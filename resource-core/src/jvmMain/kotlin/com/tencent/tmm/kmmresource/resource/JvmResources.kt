@@ -1,7 +1,6 @@
 package com.tencent.tmm.kmmresource.resource
 
 import java.io.InputStream
-import javax.xml.parsers.DocumentBuilderFactory
 
 internal object JvmResources {
     private val loader = Thread.currentThread().contextClassLoader ?: JvmResources::class.java.classLoader
@@ -11,37 +10,23 @@ internal object JvmResources {
     fun bytes(path: String): ByteArray = stream(path).use { it.readBytes() }
     fun text(path: String): String = bytes(path).decodeToString()
 
-    private val strings by lazy { parseValues("MR/base/strings.xml", "string") }
-    private val colors by lazy { parseValues("MR/colors/colors.xml", "color") }
+    private val tables = JvmResourceTables(loader)
 
     fun string(name: String, vararg args: Any): String {
-        val value = strings[name] ?: strings.entries.firstOrNull { name.endsWith(it.key) }?.value
-            ?: error("String resource not found: $name")
-        return if (args.isEmpty()) value else String.format(value.replace(Regex("%\\d+\\$"), "%"), *args)
+        val value = tables.string(name)
+        return if (args.isEmpty()) value else String.format(value, *args)
     }
 
     fun plural(name: String, quantity: Int): String {
-        val document = stream("MR/base/plurals.xml").use { DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(it) }
-        val nodes = document.getElementsByTagName("plurals")
-        for (index in 0 until nodes.length) {
-            val node = nodes.item(index)
-            if (node.attributes.getNamedItem("name")?.nodeValue?.let(name::endsWith) == true) {
-                val children = node.childNodes
-                val wanted = if (quantity == 1) "one" else "other"
-                for (childIndex in 0 until children.length) {
-                    val child = children.item(childIndex)
-                    if (child.attributes?.getNamedItem("quantity")?.nodeValue == wanted) {
-                        return String.format(child.textContent.androidStringValue().replace(Regex("%\\d+\\$"), "%"), quantity)
-                    }
-                }
-            }
-        }
-        error("Plural resource not found: $name")
+        val values = tables.plural(name)
+        val wanted = if (quantity == 1) "one" else "other"
+        val value = values[wanted] ?: values["other"]
+            ?: error("Plural resource has no '$wanted' or 'other' value: $name")
+        return String.format(value, quantity)
     }
 
     fun color(name: String): Int {
-        val value = (colors[name] ?: colors.entries.firstOrNull { name.endsWith(it.key) }?.value)
-            ?.removePrefix("#") ?: error("Color resource not found: $name")
+        val value = tables.color(name).removePrefix("#")
         return when (value.length) {
             6 -> (0xff000000L or value.toLong(16)).toInt()
             8 -> value.toLong(16).toInt()
@@ -49,17 +34,6 @@ internal object JvmResources {
         }
     }
 
-    private fun parseValues(path: String, element: String): Map<String, String> = runCatching {
-        stream(path).use { input ->
-            val nodes = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(input).getElementsByTagName(element)
-            buildMap {
-                for (index in 0 until nodes.length) {
-                    val node = nodes.item(index)
-                    put(node.attributes.getNamedItem("name").nodeValue, node.textContent.androidStringValue())
-                }
-            }
-        }
-    }.getOrDefault(emptyMap())
 }
 
 internal fun resourceCandidates(path: String): List<String> {

@@ -1,0 +1,10 @@
+<resources>
+    <plurals name="items">
+        <item quantity="one">%1$d item</item>
+        <item quantity="other">%1$d items</item>
+    </plurals>
+    <plurals name="pending_items">
+        <item quantity="one">%1$d pending item</item>
+        <item quantity="other">%1$d pending items</item>
+    </plurals>
+</resources>

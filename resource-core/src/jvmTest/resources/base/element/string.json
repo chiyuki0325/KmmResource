@@ -1,0 +1,7 @@
+{"string":[
+  {"name":"sample_settings","value":"Settings"},
+  {"name":"sample_account_settings","value":"Account settings"},
+  {"name":"sample_save","value":"Save"},
+  {"name":"sample_conflict_save","value":"Clashes with %1$s; %1$s remains"},
+  {"name":"sample_reordered","value":"%2$s: %1$s"}
+]}
