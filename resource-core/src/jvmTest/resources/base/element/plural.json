@@ -1,0 +1,5 @@
+{"plural":[
+  {"name":"sample_items","value":[{"quantity":"one","value":"%1$d item"},{"quantity":"other","value":"%1$d items"}]},
+  {"name":"sample_pending_items","value":[{"quantity":"one","value":"%1$d pending item"},{"quantity":"other","value":"%1$d pending items"}]},
+  {"name":"sample_other_only","value":[{"quantity":"other","value":"%1$d item"}]}
+]}
