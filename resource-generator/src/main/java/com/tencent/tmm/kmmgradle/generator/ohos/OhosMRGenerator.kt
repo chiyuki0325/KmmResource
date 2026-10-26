@@ -79,13 +79,14 @@ class OhosMRGenerator(
         kotlinTarget.binaries
             .matching { it.compilation == compilation }
             .configureEach { binary ->
-                val linkTask = binary.linkTask
-                val mergeResTask =
-                    linkTask.project.tasks.getByName(MergeOhosResourcesTask.TASK_NAME) as MergeOhosResourcesTask
-                mergeResTask.linkTask = linkTask
-                mergeResTask.resourcesDir = resourcesGenerationDir
-                linkTask.finalizedBy(mergeResTask)
-                CommonUtils.setupTaskExecutable(mergeResTask)
+                binary.linkTaskProvider.configure { linkTask ->
+                    val mergeResTask =
+                        linkTask.project.tasks.getByName(MergeOhosResourcesTask.TASK_NAME) as MergeOhosResourcesTask
+                    mergeResTask.linkTask = linkTask
+                    mergeResTask.resourcesDir = resourcesGenerationDir
+                    linkTask.finalizedBy(mergeResTask)
+                    CommonUtils.setupTaskExecutable(mergeResTask)
+                }
             }
     }
 

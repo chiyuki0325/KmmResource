@@ -268,7 +268,6 @@ class MultiplatformResourcesPlugin : Plugin<Project> {
         features: List<ResourceGeneratorFeature<out MRGenerator.Generator>>
     ) {
         when (target.konanTarget) {
-            KonanTarget.IOS_ARM32,
             KonanTarget.IOS_ARM64,
             KonanTarget.IOS_SIMULATOR_ARM64,
             KonanTarget.IOS_X64,
@@ -280,12 +279,10 @@ class MultiplatformResourcesPlugin : Plugin<Project> {
             KonanTarget.TVOS_SIMULATOR_ARM64,
             KonanTarget.TVOS_X64,
 
-            KonanTarget.WATCHOS_ARM32,
             KonanTarget.WATCHOS_ARM64,
             KonanTarget.WATCHOS_DEVICE_ARM64,
             KonanTarget.WATCHOS_SIMULATOR_ARM64,
-            KonanTarget.WATCHOS_X64,
-            KonanTarget.WATCHOS_X86 -> {
+            KonanTarget.WATCHOS_X64 -> {
 
                 setupExecutableResources(target = target)
                 setupTestsResources(target = target)

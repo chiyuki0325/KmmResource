@@ -34,7 +34,7 @@ It is derived from Tencent KuiklyBase `KmmResource`. Preserve upstream history, 
 
 ## Toolchains and validation
 
-- Enabled targets use standard Kotlin 2.1.20 unless a deliberate migration is documented.
+- Enabled targets use standard Kotlin 2.2.21 unless a deliberate migration is documented.
 - Compile the generator, resource-core JVM/Android, and resource-compose JVM/Android before pushing.
 - Validate iOS on macOS when available.
 - OHOS changes require a manual source audit while its target is disabled; explicitly document untested native changes.

@@ -11,7 +11,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.withType
-import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import java.io.File
 
 class CommonMRGenerator(
@@ -32,7 +32,7 @@ class CommonMRGenerator(
     override fun apply(generationTask: Task, project: Project) {
         CommonUtils.setupTaskExecutable(generationTask)
         project.tasks
-            .withType<KotlinCompile<*>>()
+            .withType<KotlinCompilationTask<*>>()
             .matching { it.name.contains(sourceSetName, ignoreCase = true) }
             .configureEach { it.dependsOn(generationTask) }
 

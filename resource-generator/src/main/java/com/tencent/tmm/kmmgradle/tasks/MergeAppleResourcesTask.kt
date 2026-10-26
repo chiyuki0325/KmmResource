@@ -2,12 +2,12 @@ package com.tencent.tmm.kmmgradle.tasks
 
 import com.tencent.tmm.kmmgradle.utils.copyDirectory
 import com.tencent.tmm.kmmgradle.utils.klibs
+import com.tencent.tmm.kmmgradle.utils.withKlibResources
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
-import org.jetbrains.kotlin.library.impl.KotlinLibraryLayoutImpl
 import java.io.File
 
 open class MergeAppleResourcesTask : DefaultTask() {
@@ -49,19 +49,12 @@ open class MergeAppleResourcesTask : DefaultTask() {
         if (inputFile.exists().not()) return
 
         project.logger.info("copy resources from $inputFile into $outputDir")
-        val klibKonan = org.jetbrains.kotlin.konan.file.File(inputFile.path)
-        val klib = KotlinLibraryLayoutImpl(klib = klibKonan, component = "default")
-        val layout = klib.extractingToTemp
 
-        try {
-            val resDir = File(layout.resourcesDir.path, "tmm-resources-apple")
+        withKlibResources(inputFile) { resourcesDir ->
+            val resDir = File(resourcesDir, "tmm-resources-apple")
             if (resDir.exists()) {
                 resDir.copyDirectory(outputDir)
             }
-        } catch (@Suppress("SwallowedException") exc: kotlin.io.NoSuchFileException) {
-            project.logger.info("resources in $inputFile not found")
-        } catch (@Suppress("SwallowedException") exc: java.nio.file.NoSuchFileException) {
-            project.logger.info("resources in $inputFile not found (empty lib)")
         }
     }
 

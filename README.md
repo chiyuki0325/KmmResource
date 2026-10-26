@@ -1,6 +1,6 @@
 # KMM Multiplatform Resource Management Solution
 
-> NEUPass fork: adds first-class JVM Desktop generation/runtime/Compose support while retaining Android, iOS, and OHOS source implementations. Enabled targets use standard Kotlin 2.1.20. OHOS target registration remains disabled until its custom toolchain is ready, but OHOS code must stay aligned; see `AGENTS.md`.
+> NEUPass fork: adds first-class JVM Desktop generation/runtime/Compose support while retaining Android, iOS, and OHOS source implementations. Enabled targets use standard Kotlin 2.2.21. OHOS target registration remains disabled until its custom toolchain is ready, but OHOS code must stay aligned; see `AGENTS.md`.
 
 [中文README](./README中文.md)
 

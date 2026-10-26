@@ -6,6 +6,7 @@ package com.tencent.tmm.kmmgradle.utils
 
 import java.io.File
 import java.io.InputStream
+import java.nio.file.Files
 import java.util.zip.ZipEntry
 import java.util.zip.ZipException
 import java.util.zip.ZipFile
@@ -39,3 +40,17 @@ private fun unzipEntryTo(
 
 private fun InputStream.copyTo(file: File): Long =
     file.outputStream().use { copyTo(it) }
+
+internal fun <T> withKlibResources(klibFile: File, action: (File) -> T): T {
+    if (klibFile.isDirectory) {
+        return action(klibFile.resolve("default/resources"))
+    }
+
+    val extractionDir = Files.createTempDirectory("kmm-resource-klib-").toFile()
+    return try {
+        unzipTo(outputDirectory = extractionDir, zipFile = klibFile)
+        action(extractionDir.resolve("default/resources"))
+    } finally {
+        extractionDir.deleteRecursively()
+    }
+}

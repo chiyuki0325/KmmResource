@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.TestExecutable
 import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 import org.jetbrains.kotlin.gradle.tasks.FrameworkDescriptor
-import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import java.io.File
 import kotlin.reflect.full.memberProperties
@@ -118,34 +117,35 @@ class AppleMRGenerator(
         val kotlinTarget: KotlinNativeTarget = compilation.target as KotlinNativeTarget
 
         kotlinTarget.binaries.matching { it.compilation == compilation }.configureEach { binary ->
-            val linkTask = binary.linkTask
-            val mergeResTask =
-                linkTask.project.tasks.getByName(MergeAppleResourcesTask.TASK_NAME) as MergeAppleResourcesTask
-            mergeResTask.linkTask = linkTask
-            mergeResTask.resourcesDir = resourcesGenerationDir
-            linkTask.finalizedBy(mergeResTask)
-            CommonUtils.setupTaskExecutable(mergeResTask)
+            binary.linkTaskProvider.configure { linkTask ->
+                val mergeResTask =
+                    linkTask.project.tasks.getByName(MergeAppleResourcesTask.TASK_NAME) as MergeAppleResourcesTask
+                mergeResTask.linkTask = linkTask
+                mergeResTask.resourcesDir = resourcesGenerationDir
+                linkTask.finalizedBy(mergeResTask)
+                CommonUtils.setupTaskExecutable(mergeResTask)
+            }
         }
     }
 
     private fun setupKLibResources(generationTask: Task) {
-        val compileTask: KotlinNativeCompile = compilation.compileKotlinTask
-        compileTask.dependsOn(generationTask)
+        compilation.compileTaskProvider.configure { compileTask ->
+            compileTask.dependsOn(generationTask)
+            compileTask.doLast(
+                PackResourcesToKLibAction(
+                    mrSettings = mrSettings,
+                    baseLocalizationRegion = baseLocalizationRegion,
+                    bundleIdentifierProvider = bundleIdentifierProvider,
+                    assetsDirectoryProvider = assetsGenerationDir,
+                    resourcesGenerationDirProvider = resourcesGenerationDir,
+                )
+            )
+        }
 
         // tasks like compileIosMainKotlinMetadata when only one target enabled
         generationTask.project.tasks.withType<KotlinCommonCompile>()
             .matching { it.name.contains(sourceSetName, ignoreCase = true) }
             .configureEach { it.dependsOn(generationTask) }
-
-        compileTask.doLast(
-            PackResourcesToKLibAction(
-                mrSettings = mrSettings,
-                baseLocalizationRegion = baseLocalizationRegion,
-                bundleIdentifierProvider = bundleIdentifierProvider,
-                assetsDirectoryProvider = assetsGenerationDir,
-                resourcesGenerationDirProvider = resourcesGenerationDir,
-            )
-        )
     }
 
     private fun setupFrameworkResources() {
@@ -157,29 +157,29 @@ class AppleMRGenerator(
             .configureEach { binary ->
                 val framework = binary as Framework
 
-                val linkTask = framework.linkTask
+                framework.linkTaskProvider.configure { linkTask ->
+                    val taskName = CopyResourcesFromKLibsToDirTask.TASK_NAME + "_" + linkTask.name
 
-                val taskName = CopyResourcesFromKLibsToDirTask.TASK_NAME + "_" + linkTask.name
+                    val toDirTask = GradleUtils.addTaskCompact(
+                        project, project.tasks, taskName, CopyResourcesFromKLibsToDirTask::class.java
+                    )
 
-                val toDirTask = GradleUtils.addTaskCompact(
-                    project, project.tasks, taskName, CopyResourcesFromKLibsToDirTask::class.java
-                )
+                    toDirTask.linkTask = linkTask
 
-                toDirTask.linkTask = linkTask
+                    linkTask.finalizedBy(toDirTask)
 
-                linkTask.finalizedBy(toDirTask)
-
-                if (framework.isStatic) {
-                    val resourcesExtension: MultiplatformResourcesPluginExtension =
-                        project.extensions.getByType()
-                    if (resourcesExtension.staticFrameworkWarningEnabled) {
-                        project.logger.warn(
-                            """
+                    if (framework.isStatic) {
+                        val resourcesExtension: MultiplatformResourcesPluginExtension =
+                            project.extensions.getByType()
+                        if (resourcesExtension.staticFrameworkWarningEnabled) {
+                            project.logger.warn(
+                                """
 $linkTask produces static framework, Xcode should have Build Phase with copyFrameworkResourcesToApp gradle task call. 
 """
-                        )
+                            )
+                        }
+                        createCopyFrameworkResourcesTask(linkTask)
                     }
-                    createCopyFrameworkResourcesTask(linkTask)
                 }
             }
     }
