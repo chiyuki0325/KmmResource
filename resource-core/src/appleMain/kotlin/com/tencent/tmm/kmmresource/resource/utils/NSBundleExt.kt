@@ -4,11 +4,11 @@
 
 package com.tencent.tmm.kmmresource.resource.utils
 
-import com.tencent.tmm.knoi.logger.info
 import platform.CoreFoundation.CFAbsoluteTimeGetCurrent
 import platform.Foundation.NSBundle
 import platform.Foundation.NSDirectoryEnumerator
 import platform.Foundation.NSFileManager
+import platform.Foundation.NSLog
 import platform.Foundation.NSURL
 
 var podName = "QLMM"
@@ -22,6 +22,10 @@ private var podBundlePath = NSBundle.mainBundle.pathForResource(podName, "bundle
 private var kmmBundle = podBundlePath?.let { NSBundle.bundleWithPath(it) }
 
 private fun currentTimeMillis(): Long = (CFAbsoluteTimeGetCurrent() * 1000).toLong()
+
+private fun info(message: String) {
+    NSLog("%@", message)
+}
 
 fun NSBundle.Companion.loadableBundle(identifier: String): NSBundle {
     info("loadableBundle start  " + currentTimeMillis())
