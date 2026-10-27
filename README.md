@@ -30,6 +30,15 @@ The fork recognizes Kotlin JVM targets and generates a JVM `actual MR` class. Ge
 
 Validated targets: Android and JVM Desktop. iOS requires macOS validation. OHOS sources are retained but its target is currently disabled.
 
+Publish the generator, plugin marker, and enabled runtime target matrix to a Maven repository with:
+
+```shell
+./gradlew publishAllPublicationsToLocalRepository \
+  -PlocalMavenRepository=/path/to/maven
+```
+
+On Linux ARM64 the Apple targets are skipped because the Kotlin/Native host distribution is unavailable. Use Linux x86_64 or macOS to publish the complete enabled matrix.
+
 ### KMM Project Setup
 
 **Root `build.gradle.kts`:**

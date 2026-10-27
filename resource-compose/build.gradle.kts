@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.composeOhos)
     alias(libs.plugins.composeCompiler)
+    `maven-publish`
 }
 
 val hasKotlinNativeHostDistribution =
@@ -10,7 +11,9 @@ val hasKotlinNativeHostDistribution =
         System.getProperty("os.arch").lowercase() !in setOf("aarch64", "arm64")
 
 kotlin {
-    androidTarget()
+    androidTarget {
+        publishLibraryVariants("release")
+    }
     jvm()
     if (hasKotlinNativeHostDistribution) {
         iosX64()
