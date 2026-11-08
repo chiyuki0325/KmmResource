@@ -6,13 +6,14 @@ package com.tencent.tmm.kmmresource.resource
 
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCObjectVar
-import kotlinx.cinterop.alloc
-import kotlinx.cinterop.memScoped
-import kotlinx.cinterop.ptr
-import kotlinx.cinterop.value
+import kotlinx.cinterop.addressOf
+import kotlinx.cinterop.usePinned
 import platform.Foundation.NSBundle
+import platform.Foundation.NSData
 import platform.Foundation.NSError
 import platform.Foundation.NSURL
+import platform.Foundation.create
+import platform.posix.memcpy
 
 actual open class FileResource(
     val fileName: String,
@@ -32,20 +33,16 @@ actual open class FileResource(
             subdirectory = "files"
         )!!
 
-    @OptIn(ExperimentalForeignApi::class)
-    fun readText(): String {
-        val filePath = path
-        val (result: String?, error: NSError?) = memScoped {
-            val p = alloc<ObjCObjectVar<NSError?>>()
-            val result: String? = runCatching {
-                readContentOfFile(filePath, p.ptr)
-            }.getOrNull()
-            result to p.value
+    @OptIn(ExperimentalForeignApi::class, kotlinx.cinterop.BetaInteropApi::class)
+    actual open fun readBytes(): ByteArray {
+        val data = NSData.create(contentsOfFile = path)
+            ?: throw ReadFileTextException(this, "Unable to read $path")
+        return ByteArray(data.length.toInt()).also { bytes ->
+            if (bytes.isNotEmpty()) bytes.usePinned { memcpy(it.addressOf(0), data.bytes, data.length) }
         }
-
-        if (error != null) throw ReadFileTextException(fileResource = this, error = error)
-        else return result!!
     }
+
+    actual open fun readText(): String = readBytes().decodeToString()
 }
 
 @OptIn(ExperimentalForeignApi::class)

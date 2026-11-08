@@ -6,16 +6,18 @@ package com.tencent.tmm.kmmresource.resource.desc
 
 
 actual interface StringDesc {
+    actual fun resolve(): String = toString()
+
     actual sealed class LocaleType {
-        actual object System : LocaleType()
-        actual class Custom actual constructor(@Suppress("UnusedPrivateMember") locale: String) :
-            LocaleType()
+        internal abstract val locale: String
+        actual object System : LocaleType() {
+            override val locale: String = ""
+        }
+        actual class Custom actual constructor(override val locale: String) : LocaleType()
     }
 
     actual companion object {
-        actual var localeType: LocaleType
-            get() = LocaleType.System
-            set(value) {}
+        actual var localeType: LocaleType = LocaleType.System
     }
 
 }

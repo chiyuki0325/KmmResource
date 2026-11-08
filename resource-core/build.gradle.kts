@@ -25,7 +25,10 @@ kotlin {
             dependencies { implementation(libs.appCompatResources) }
         }
         val jvmMain by getting {
-            dependencies { implementation(libs.kotlinxSerialization) }
+            dependencies {
+                implementation(libs.kotlinxSerialization)
+                implementation("com.ibm.icu:icu4j:77.1")
+            }
         }
         val jvmTest by getting {
             dependencies { implementation(kotlin("test")) }

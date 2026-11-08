@@ -16,7 +16,7 @@ import com.tencent.tmm.kmmresource.resource.desc.StringDesc
 @Composable actual fun colorResource(resource: ColorResource): Color = Color(resource.getColor())
 @Composable actual fun stringResource(resource: StringResource): String = resource.getString()
 @Composable actual fun stringResource(resource: StringResource, vararg args: Any): String = resource.getString(*args)
-@Composable actual fun stringResource(resource: PluralsResource, quantity: Int): String = resource.getQuantityString(quantity)
+@Composable actual fun stringResource(resource: PluralsResource, quantity: Int): String = resource.getQuantityString(quantity, quantity)
 @Composable actual fun StringDesc.localized(): String = toString()
 
 @Composable

@@ -5,6 +5,12 @@ import com.tencent.tmm.knoi.type.ArrayBuffer
 
 @ServiceConsumer
 interface OhosResourceService {
+    fun getLocalizedString(resName: String, locale: String, args: Array<Any>): String?
+
+    fun getLocalizedPlural(
+        resName: String, quantity: Int, locale: String, args: Array<Any>, formatted: Boolean
+    ): String?
+
     fun getString(resName: String): String?
 
     fun getString(resName: String, vararg args: Any): String?

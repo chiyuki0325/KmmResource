@@ -20,6 +20,7 @@
         "name": "default",
         "signingConfig": "default",
         "compatibleSdkVersion": "4.1.0(11)",
+        "compileSdkVersion": 18,
         "runtimeOS": "HarmonyOS",
       }
     ],

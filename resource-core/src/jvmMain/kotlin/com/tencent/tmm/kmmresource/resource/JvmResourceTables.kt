@@ -6,13 +6,18 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import java.net.URL
+import java.util.Locale
+import java.util.ResourceBundle
 
 /**
  * MR and these build-generated tables use the same complete, prefixed resource names.
  * The table format is shared with OHOS and was already emitted by the original JVM generator,
  * so previously compiled MR declarations and their packaged tables remain usable together.
  */
-internal class JvmResourceTables(private val loader: ClassLoader) {
+internal class JvmResourceTables(
+    private val loader: ClassLoader,
+    private val locale: Locale = Locale.ROOT,
+) {
     private val strings by lazy { load("string") { it.jsonPrimitive.content.androidStringValue() } }
     private val colors by lazy { load("color") { it.jsonPrimitive.content } }
     private val plurals by lazy {
@@ -33,10 +38,20 @@ internal class JvmResourceTables(private val loader: ClassLoader) {
     fun color(name: String): String = colors[name] ?: error("Color resource not found: $name")
 
     private fun <T> load(kind: String, decode: (JsonElement) -> T): Map<String, T> {
+        val directories = ResourceBundle.Control.getControl(ResourceBundle.Control.FORMAT_DEFAULT)
+            .getCandidateLocales("resources", locale)
+            .reversed()
+            .map { if (it == Locale.ROOT) "base" else it.toLanguageTag() }
+        return buildMap {
+            directories.forEach { directory -> putAll(loadDirectory(kind, directory, decode)) }
+        }
+    }
+
+    private fun <T> loadDirectory(kind: String, directory: String, decode: (JsonElement) -> T): Map<String, T> {
         val values = mutableMapOf<String, Pair<JsonElement, URL>>()
         // Enumerate every module's table, including tables packaged in dependency JARs.
         // Never select the first classpath file or infer a module prefix from a suffix.
-        val tables = loader.getResources("base/element/$kind.json").asSequence()
+        val tables = loader.getResources("$directory/element/$kind.json").asSequence()
             .distinctBy { it.toExternalForm() }
         tables.forEach { table ->
             val entries = table.openStream().bufferedReader(Charsets.UTF_8).use {

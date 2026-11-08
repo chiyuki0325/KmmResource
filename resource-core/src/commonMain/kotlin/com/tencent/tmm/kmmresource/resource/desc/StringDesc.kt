@@ -18,6 +18,7 @@ fun Iterable<StringDesc>.joinToStringDesc(separator: String = ", "): StringDesc 
     StringDesc.Composition(this, separator)
 
 expect interface StringDesc {
+    open fun resolve(): String
 
     sealed class LocaleType {
         object System : LocaleType

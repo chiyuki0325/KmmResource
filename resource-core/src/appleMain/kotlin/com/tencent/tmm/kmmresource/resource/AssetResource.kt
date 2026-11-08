@@ -9,6 +9,9 @@ actual class AssetResource(
     extension: String,
     bundle: NSBundle = NSBundle.mainBundle
 ) : FileResource(fileName, extension, bundle) {
+    actual override fun readBytes(): ByteArray = super.readBytes()
+    actual override fun readText(): String = super.readText()
+
     override val path: String
         get() = bundle.pathForResource(
             name = fileName,

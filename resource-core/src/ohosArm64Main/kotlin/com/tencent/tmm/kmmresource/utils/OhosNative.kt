@@ -58,7 +58,7 @@ internal fun processRawFile(fileName: String): ByteArray? = memScoped {
     val resultCode = ohos_get_raw_file(fileName, fileLen.ptr, fileData.ptr)
     if (resultCode != 0) return null
     val result = ByteArray(fileLen.value.toInt())
-    result.usePinned { memcpy(it.addressOf(0), fileData.value, fileLen.value) }
+    if (result.isNotEmpty()) result.usePinned { memcpy(it.addressOf(0), fileData.value, fileLen.value) }
     free(fileData.value)
     result
 }

@@ -4,6 +4,9 @@
 
 [中文README](./README中文.md)
 
+The NEUPass fork also provides common, non-Compose resource readers from
+`0.0.1-neupass.15`. See [initialization, API contracts, and platform requirements](docs/non-compose-resources.md).
+
 This project implements a cross-platform native resource management solution using **Kotlin Multiplatform (KMP)** technology, supporting Android, iOS, and HarmonyOS platforms. It generates type-safe resource access classes (e.g., `MR` class) during compilation, providing compile-time validation and unified resource management across platforms through standardized encapsulation mechanisms (Kotlin/Native klib & Kotlin/JVM aar).
 
 ## Core Concept

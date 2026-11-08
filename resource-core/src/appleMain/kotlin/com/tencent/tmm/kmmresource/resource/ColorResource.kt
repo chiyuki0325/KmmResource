@@ -9,4 +9,8 @@ import platform.Foundation.NSBundle
 actual class ColorResource(
     val name: String,
     val bundle: NSBundle = NSBundle.mainBundle
-)
+) {
+    actual fun getColor(): Int = readColor()
+}
+
+internal expect fun ColorResource.readColor(): Int

@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import com.tencent.tmm.kmmresource.resource.ColorResource
+import com.tencent.tmm.kmmresource.resource.getUIColor as getCoreUIColor
 import kotlinx.cinterop.DoubleVarOf
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.alloc
@@ -12,18 +13,8 @@ import kotlinx.cinterop.ptr
 import kotlinx.cinterop.value
 import platform.CoreGraphics.CGFloat
 import platform.UIKit.UIColor
-import platform.UIKit.colorNamed
 
-fun ColorResource.getUIColor(): UIColor {
-    val color: UIColor? = UIColor.colorNamed(
-        name = this.name,
-        inBundle = this.bundle,
-        compatibleWithTraitCollection = null
-    )
-    return requireNotNull(color) {
-        "Can't read color $name from bundle $bundle, please check kmm-resources gradle configuration"
-    }
-}
+fun ColorResource.getUIColor(): UIColor = getCoreUIColor()
 
 @OptIn(ExperimentalForeignApi::class)
 @Composable

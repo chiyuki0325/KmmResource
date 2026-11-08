@@ -1,5 +1,10 @@
 
 export interface OhosResourceService {
+  getLocalizedString(resName: string, locale: string, args: Array<string | number>): string;
+
+  getLocalizedPlural(
+    resName: string, quantity: number, locale: string, args: Array<string | number>, formatted: boolean
+  ): string;
 
   getString(resName: string): string;
 

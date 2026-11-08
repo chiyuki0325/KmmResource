@@ -8,6 +8,8 @@ import android.content.Context
 import java.util.Locale
 
 actual interface StringDesc {
+    actual fun resolve(): String = toString(com.tencent.tmm.kmmresource.KmmResource.context)
+
     fun toString(context: Context): String
 
     actual sealed class LocaleType {

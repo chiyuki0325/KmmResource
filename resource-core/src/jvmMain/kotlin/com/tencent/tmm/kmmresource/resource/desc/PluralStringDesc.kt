@@ -11,6 +11,6 @@ actual data class PluralStringDesc actual constructor(
     val number: Int
 ) : StringDesc {
     override fun toString(): String {
-        return pluralsRes.getQuantityString(number)
+        return pluralsRes.getQuantityString(number, number)
     }
 }

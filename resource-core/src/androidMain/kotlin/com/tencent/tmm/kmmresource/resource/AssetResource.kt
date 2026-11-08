@@ -5,11 +5,14 @@
 package com.tencent.tmm.kmmresource.resource
 
 import android.content.Context
+import com.tencent.tmm.kmmresource.KmmResource
 import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
 
 actual class AssetResource(val path: String) {
+    actual fun readBytes(): ByteArray = getInputStream(KmmResource.context).use { it.readBytes() }
+    actual fun readText(): String = readBytes().decodeToString()
 
     actual val originalPath: String by ::path
 

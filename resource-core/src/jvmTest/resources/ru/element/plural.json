@@ -1,0 +1,1 @@
+{"plural":[{"name":"sample_items","value":[{"quantity":"one","value":"%1$d предмет"},{"quantity":"few","value":"%1$d предмета"},{"quantity":"many","value":"%1$d предметов"},{"quantity":"other","value":"%1$d предмета"}]}]}

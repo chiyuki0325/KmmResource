@@ -4,4 +4,7 @@
 
 package com.tencent.tmm.kmmresource.resource
 
-expect class FileResource
+expect class FileResource {
+    fun readBytes(): ByteArray
+    fun readText(): String
+}

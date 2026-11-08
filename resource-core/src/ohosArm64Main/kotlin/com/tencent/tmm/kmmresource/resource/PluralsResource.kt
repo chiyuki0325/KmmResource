@@ -4,9 +4,18 @@
 
 package com.tencent.tmm.kmmresource.resource
 
+import com.tencent.tmm.kmmresource.utils.OhosKmmResourceManager
+
 /**
  * complete
  */
 actual class PluralsResource(
     val resourceName: String
-)
+) {
+    actual fun getQuantityString(quantity: Int): String =
+        OhosKmmResourceManager.getPlural(resourceName, quantity)
+            ?: error("Plural resource not found: $resourceName")
+
+    actual fun getQuantityString(quantity: Int, vararg args: Any): String =
+        OhosKmmResourceManager.getFormattedPlural(resourceName, quantity, args)
+}

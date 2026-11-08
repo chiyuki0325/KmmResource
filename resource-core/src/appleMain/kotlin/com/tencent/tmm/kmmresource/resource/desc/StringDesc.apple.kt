@@ -11,6 +11,8 @@ import platform.Foundation.localeIdentifierFromComponents
 import kotlin.native.concurrent.ThreadLocal
 
 actual interface StringDesc {
+    actual fun resolve(): String = localized()
+
     fun localized(): String
 
     actual sealed class LocaleType {

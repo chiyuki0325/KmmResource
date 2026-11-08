@@ -7,5 +7,8 @@ package com.tencent.tmm.kmmresource.resource
 import com.tencent.tmm.kmmresource.resource.desc.ResourceFormatted
 import com.tencent.tmm.kmmresource.resource.desc.StringDesc
 
-expect class StringResource
+expect class StringResource {
+    fun getString(): String
+    fun getString(vararg args: Any): String
+}
 fun StringResource.format(args: List<Any>) = StringDesc.ResourceFormatted(this, args)

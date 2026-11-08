@@ -1,5 +1,8 @@
 # 开始
 
+NEUPass分支从`0.0.1-neupass.15`起提供common非Compose资源读取接口。
+初始化方式、API约定及各平台要求见[非Compose资源读取](docs/non-compose-resources.md)。
+
 本项目基于Kotlin Multiplatform技术，构建了一套跨平台原生资源管理解决方案，支持Android、iOS及HarmonyOS三大移动端平台。通过构建时同步生成类型安全的资源访问类（Resource Class），结合Kotlin/Native（klib）/ Kotlin/Jvm（aar）的标准化资源封装机制，实现了多平台资源统一管理与编译期强校验，为开发者提供与Android R类相仿的资源调用体验。
 
 资源管理器到底管理的是什么，或者说给使用方暴露的是什么？

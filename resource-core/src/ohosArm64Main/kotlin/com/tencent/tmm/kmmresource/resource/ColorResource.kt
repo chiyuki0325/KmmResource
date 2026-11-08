@@ -9,6 +9,6 @@ import com.tencent.tmm.kmmresource.utils.OhosKmmResourceManager
 actual class ColorResource(
     val resourceName: String
 ) {
-    fun getColor(): Int = OhosKmmResourceManager.getColor(resourceName)
+    actual fun getColor(): Int = OhosKmmResourceManager.getColor(resourceName)
         ?: throw Exception("can not find ${resourceName} target color")
 }

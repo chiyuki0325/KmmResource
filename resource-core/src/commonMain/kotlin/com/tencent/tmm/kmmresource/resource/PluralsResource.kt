@@ -8,6 +8,9 @@ import com.tencent.tmm.kmmresource.resource.desc.Plural
 import com.tencent.tmm.kmmresource.resource.desc.StringDesc
 
 
-expect class PluralsResource
+expect class PluralsResource {
+    fun getQuantityString(quantity: Int): String
+    fun getQuantityString(quantity: Int, vararg args: Any): String
+}
 
 fun PluralsResource.format(number: Int) = StringDesc.Plural(this, number)

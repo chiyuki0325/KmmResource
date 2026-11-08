@@ -1,33 +1,35 @@
 package com.tencent.tmm.kmmresource.utils
 
-import com.tencent.tmm.kmmresource.utils.cache.ColorCache
 import com.tencent.tmm.kmmresource.utils.cache.FontCache
-import com.tencent.tmm.kmmresource.utils.cache.StringCache
 import com.tencent.tmm.knoi.type.ArrayBuffer
+import com.tencent.tmm.kmmresource.resource.desc.StringDesc
 
 object OhosKmmResourceManager {
 
     private val fontCache = FontCache()
-    private val colorCache = ColorCache()
-    private val stringCache = StringCache()
 
     internal val resourceService = getOhosResourceServiceApi()
 
     fun getString(resName: String): String? {
-        val resResult = stringCache.getResourceByCache(resName)
-        return resResult
+        return resourceService.getLocalizedString(resName, StringDesc.localeType.locale, emptyArray())
     }
 
     fun getString(resName: String, vararg args: Any): String? {
-        val resResult = resourceService.getString(resName, args)
-        return resResult
+        return resourceService.getLocalizedString(resName, StringDesc.localeType.locale, resolveArgs(args))
     }
 
 
     fun getPlural(resName: String, args: Int): String? {
-        val resResult = getPluralStringByName(resName, args.toUInt())
-        return resResult
+        return resourceService.getLocalizedPlural(resName, args, StringDesc.localeType.locale, emptyArray(), false)
     }
+
+    fun getFormattedPlural(resName: String, quantity: Int, args: Array<out Any>): String =
+        resourceService.getLocalizedPlural(
+            resName, quantity, StringDesc.localeType.locale, resolveArgs(args), true
+        ) ?: error("Plural resource not found: $resName")
+
+    private fun resolveArgs(args: Array<out Any>): Array<Any> =
+        args.map { (it as? StringDesc)?.resolve() ?: it }.toTypedArray()
 
     @Deprecated(message = "please use getImageNative")
     fun getImage(resName: String): ArrayBuffer? {
@@ -40,7 +42,7 @@ object OhosKmmResourceManager {
         return resResult
     }
 
-    fun getColor(resName: String): Int = colorCache.getResourceByCache(resName)
+    fun getColor(resName: String): Int = getColorByName(resName)
 
     fun getImageBase64(resName: String): String? {
         val resResult = try {

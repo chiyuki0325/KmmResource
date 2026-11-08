@@ -4,4 +4,6 @@
 
 package com.tencent.tmm.kmmresource.resource
 
-expect class ColorResource
+expect class ColorResource {
+    fun getColor(): Int
+}

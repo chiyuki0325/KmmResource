@@ -5,6 +5,7 @@
 package com.tencent.tmm.kmmresource.resource
 
 import android.content.Context
+import com.tencent.tmm.kmmresource.KmmResource
 import android.content.res.Resources
 import androidx.annotation.RawRes
 import java.io.BufferedReader
@@ -15,6 +16,11 @@ actual class FileResource(
     @RawRes
     val rawResId: Int
 ) {
+    actual fun readBytes(): ByteArray =
+        KmmResource.context.resources.openRawResource(rawResId).use { it.readBytes() }
+
+    actual fun readText(): String = readBytes().decodeToString()
+
     fun readText(context: Context): String {
         val resources: Resources = context.resources
         val inputStream: InputStream = resources.openRawResource(rawResId)

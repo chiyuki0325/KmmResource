@@ -1,6 +1,8 @@
 package com.tencent.tmm.kmmresource.resource
 
 import java.io.InputStream
+import com.ibm.icu.text.PluralRules
+import com.tencent.tmm.kmmresource.resource.desc.StringDesc
 
 internal object JvmResources {
     private val loader = Thread.currentThread().contextClassLoader ?: JvmResources::class.java.classLoader
@@ -10,23 +12,34 @@ internal object JvmResources {
     fun bytes(path: String): ByteArray = stream(path).use { it.readBytes() }
     fun text(path: String): String = bytes(path).decodeToString()
 
-    private val tables = JvmResourceTables(loader)
+    private val tables = java.util.concurrent.ConcurrentHashMap<String, JvmResourceTables>()
 
-    fun string(name: String, vararg args: Any): String {
-        val value = tables.string(name)
-        return if (args.isEmpty()) value else String.format(value, *args)
+    private fun tables(): JvmResourceTables {
+        val locale = StringDesc.localeType.locale
+        return tables.getOrPut(locale.toLanguageTag()) { JvmResourceTables(loader, locale) }
     }
 
+    fun string(name: String, vararg args: Any): String {
+        val value = tables().string(name)
+        return if (args.isEmpty()) value else format(value, args)
+    }
+
+    fun format(value: String, args: Array<out Any>): String =
+        String.format(
+            StringDesc.localeType.locale, value,
+            *args.map { (it as? StringDesc)?.resolve() ?: it }.toTypedArray()
+        )
+
     fun plural(name: String, quantity: Int): String {
-        val values = tables.plural(name)
-        val wanted = if (quantity == 1) "one" else "other"
+        val values = tables().plural(name)
+        val wanted = PluralRules.forLocale(StringDesc.localeType.locale).select(quantity.toDouble())
         val value = values[wanted] ?: values["other"]
             ?: error("Plural resource has no '$wanted' or 'other' value: $name")
-        return String.format(value, quantity)
+        return value
     }
 
     fun color(name: String): Int {
-        val value = tables.color(name).removePrefix("#")
+        val value = tables().color(name).removePrefix("#")
         return when (value.length) {
             6 -> (0xff000000L or value.toLong(16)).toInt()
             8 -> value.toLong(16).toInt()
