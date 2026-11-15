@@ -4,9 +4,11 @@
 
 package com.tencent.tmm.kmmgradle.utils
 
+import org.jetbrains.kotlin.konan.file.zipDirAs
 import java.io.File
 import java.io.InputStream
 import java.nio.file.Files
+import java.nio.file.StandardCopyOption.REPLACE_EXISTING
 import java.util.zip.ZipEntry
 import java.util.zip.ZipException
 import java.util.zip.ZipFile
@@ -52,5 +54,37 @@ internal fun <T> withKlibResources(klibFile: File, action: (File) -> T): T {
         action(extractionDir.resolve("default/resources"))
     } finally {
         extractionDir.deleteRecursively()
+    }
+}
+
+internal fun <T> withMutableKlibContents(klibFile: File, action: (File) -> T): T {
+    if (klibFile.isDirectory) {
+        return action(klibFile)
+    }
+
+    val parentDirectory = requireNotNull(klibFile.parentFile) {
+        "KLIB file has no parent directory: $klibFile"
+    }
+    val extractionDir = Files.createTempDirectory(
+        parentDirectory.toPath(),
+        "kmm-resource-klib-",
+    ).toFile()
+    val replacementFile = Files.createTempFile(
+        parentDirectory.toPath(),
+        "kmm-resource-klib-",
+        ".klib",
+    ).toFile().apply { delete() }
+
+    return try {
+        unzipTo(outputDirectory = extractionDir, zipFile = klibFile)
+        val result = action(extractionDir)
+        org.jetbrains.kotlin.konan.file.File(extractionDir.path).zipDirAs(
+            org.jetbrains.kotlin.konan.file.File(replacementFile.path),
+        )
+        Files.move(replacementFile.toPath(), klibFile.toPath(), REPLACE_EXISTING)
+        result
+    } finally {
+        extractionDir.deleteRecursively()
+        replacementFile.delete()
     }
 }
