@@ -53,7 +53,7 @@ class AppleMRGenerator(
     sourceSet: SourceSet,
     settings: MRSettings,
     generators: List<Generator>,
-    private val compilation: AbstractKotlinNativeCompilation,
+    @Transient private val compilation: AbstractKotlinNativeCompilation,
     private val baseLocalizationRegion: String?,
 ) : MRGenerator(
     generatedDir = generatedDir,
@@ -156,43 +156,41 @@ class AppleMRGenerator(
         kotlinNativeTarget.binaries.matching { it is Framework && it.compilation == compilation }
             .configureEach { binary ->
                 val framework = binary as Framework
+                val linkTaskProvider = framework.linkTaskProvider
+                val taskName = CopyResourcesFromKLibsToDirTask.TASK_NAME + "_" + linkTaskProvider.name
+                val toDirTask = GradleUtils.addTaskCompact(
+                    project, project.tasks, taskName, CopyResourcesFromKLibsToDirTask::class.java
+                )
 
-                framework.linkTaskProvider.configure { linkTask ->
-                    val taskName = CopyResourcesFromKLibsToDirTask.TASK_NAME + "_" + linkTask.name
-
-                    val toDirTask = GradleUtils.addTaskCompact(
-                        project, project.tasks, taskName, CopyResourcesFromKLibsToDirTask::class.java
-                    )
-
+                linkTaskProvider.configure { linkTask ->
                     toDirTask.linkTask = linkTask
-
                     linkTask.finalizedBy(toDirTask)
+                }
 
-                    if (framework.isStatic) {
-                        val resourcesExtension: MultiplatformResourcesPluginExtension =
-                            project.extensions.getByType()
-                        if (resourcesExtension.staticFrameworkWarningEnabled) {
-                            project.logger.warn(
-                                """
-$linkTask produces static framework, Xcode should have Build Phase with copyFrameworkResourcesToApp gradle task call. 
+                if (framework.isStatic) {
+                    val resourcesExtension: MultiplatformResourcesPluginExtension =
+                        project.extensions.getByType()
+                    if (resourcesExtension.staticFrameworkWarningEnabled) {
+                        project.logger.warn(
+                            """
+${linkTaskProvider.name} produces static framework, Xcode should have Build Phase with copyFrameworkResourcesToApp gradle task call.
 """
-                            )
-                        }
-                        createCopyFrameworkResourcesTask(linkTask)
+                        )
                     }
+                    createCopyFrameworkResourcesTask(framework)
                 }
             }
     }
 
-    private fun createCopyFrameworkResourcesTask(linkTask: KotlinNativeLink) {
-        val framework = linkTask.binary as Framework
-        val project = linkTask.project
-        val taskName = linkTask.name.replace("link", "copyResources")
+    private fun createCopyFrameworkResourcesTask(framework: Framework) {
+        val project = framework.target.project
+        val linkTaskProvider = framework.linkTaskProvider
+        val taskName = linkTaskProvider.name.replace("link", "copyResources")
 
         val copyTask = project.tasks.create(taskName, CopyFrameworkResourcesToAppTask::class.java) {
             it.framework = framework
         }
-        copyTask.dependsOn(linkTask)
+        copyTask.dependsOn(linkTaskProvider)
 
         val xcodeTask = project.tasks.maybeCreate(
             "copyFrameworkResourcesToApp", CopyFrameworkResourcesToAppEntryPointTask::class.java
