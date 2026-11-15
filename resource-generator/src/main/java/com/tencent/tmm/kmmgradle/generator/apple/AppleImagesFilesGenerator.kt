@@ -9,8 +9,13 @@ import com.squareup.kotlinpoet.KModifier
 import com.tencent.tmm.kmmgradle.generator.ImagesGenerator
 import com.tencent.tmm.kmmgradle.generator.ObjectBodyExtendable
 import com.tencent.tmm.kmmgradle.generator.ohos.OhosImagesGenerator.Companion.getImageSuffix
+import com.tencent.tmm.kmmgradle.generator.apple.AppleMRGenerator.Companion.ASSETS_DIR_NAME
 import com.tencent.tmm.kmmgradle.utils.Constants
 import com.tencent.tmm.kmmgradle.utils.svg
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonArray
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 import org.gradle.api.file.FileTree
 import java.io.File
 
@@ -63,7 +68,45 @@ class AppleImagesFilesGenerator(
 
             val resourceFile = File(mediaDir, "${key}.${file.extension}")
             file.copyTo(resourceFile)
+
+            if (file.svg) {
+                generateSvgAsset(resourcesGenerationDir, key, file)
+            }
         }
+    }
+
+    private fun generateSvgAsset(resourcesGenerationDir: File, key: String, file: File) {
+        val assetDir = File(resourcesGenerationDir, "$ASSETS_DIR_NAME/$key.imageset").apply {
+            mkdirs()
+        }
+        file.copyTo(File(assetDir, file.name), overwrite = true)
+        val content = buildJsonObject {
+            put(
+                "images",
+                buildJsonArray {
+                    add(
+                        buildJsonObject {
+                            put("idiom", JsonPrimitive("universal"))
+                            put("filename", JsonPrimitive(file.name))
+                        }
+                    )
+                }
+            )
+            put(
+                "info",
+                buildJsonObject {
+                    put("version", JsonPrimitive(1))
+                    put("author", JsonPrimitive("xcode"))
+                }
+            )
+            put(
+                "properties",
+                buildJsonObject {
+                    put("preserves-vector-representation", JsonPrimitive(true))
+                }
+            )
+        }
+        File(assetDir, "Contents.json").writeText(content.toString())
     }
 
     private companion object {

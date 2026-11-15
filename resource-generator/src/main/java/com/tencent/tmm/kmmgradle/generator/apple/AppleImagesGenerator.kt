@@ -8,6 +8,7 @@ import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.KModifier
 import com.tencent.tmm.kmmgradle.generator.ImagesGenerator
 import com.tencent.tmm.kmmgradle.generator.ObjectBodyExtendable
+import com.tencent.tmm.kmmgradle.generator.ohos.OhosImagesGenerator.Companion.getImageSuffix
 import com.tencent.tmm.kmmgradle.generator.apple.AppleMRGenerator.Companion.ASSETS_DIR_NAME
 import com.tencent.tmm.kmmgradle.utils.Constants
 import com.tencent.tmm.kmmgradle.utils.nameWithoutScale
@@ -29,8 +30,9 @@ class AppleImagesGenerator(
 
     override fun getPropertyInitializer(fileName: String): CodeBlock? {
         return CodeBlock.of(
-            "ImageResource(assetImageName = %S, bundle = ${Constants.platformInitializeArgsIOS})",
-            fileName.substringBefore(".")
+            "ImageResource(assetImageName = %S, bundle = ${Constants.platformInitializeArgsIOS}, suffix = %S)",
+            fileName.substringBefore("."),
+            getImageSuffix(fileName)
         )
     }
 
