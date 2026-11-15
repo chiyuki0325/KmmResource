@@ -24,7 +24,7 @@ private var kmmBundle = podBundlePath?.let { NSBundle.bundleWithPath(it) }
 private fun currentTimeMillis(): Long = (CFAbsoluteTimeGetCurrent() * 1000).toLong()
 
 private fun info(message: String) {
-    NSLog("%@", message)
+    NSLog(message.replace("%", "%%"))
 }
 
 fun NSBundle.Companion.loadableBundle(identifier: String): NSBundle {
