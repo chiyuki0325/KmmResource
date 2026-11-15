@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 
 val KotlinNativeLink.klibs: FileCollection
     get() {
-        return try {
+        val linkedLibraries = try {
             val getLibraries =
                 AbstractKotlinNativeCompile::class.java.getDeclaredMethod("getLibraries")
             val getIntermediateLibrary = KotlinNativeLink::class.java.getDeclaredMethod("getSource")
@@ -26,6 +26,11 @@ val KotlinNativeLink.klibs: FileCollection
         } catch (@Suppress("SwallowedException") exc: NoSuchMethodException) {
             libraries.plus(sources)
         }
+
+        val currentCompilationKlib = project.files(
+            binary.compilation.compileTaskProvider.flatMap { it.klibOutput }
+        )
+        return linkedLibraries.plus(currentCompilationKlib)
     }
 
 val Kotlin2JsCompile.klibs: FileCollection

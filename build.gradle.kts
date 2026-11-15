@@ -10,7 +10,7 @@ plugins {
 
 allprojects {
     group = "com.tencent.kuiklybase"
-    version = "0.0.1-neupass.18"
+    version = "0.0.1-neupass.19"
 
     plugins.withId("maven-publish") {
         extensions.configure<PublishingExtension> {

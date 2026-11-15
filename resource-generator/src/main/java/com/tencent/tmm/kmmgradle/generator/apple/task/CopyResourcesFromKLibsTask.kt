@@ -40,7 +40,10 @@ internal abstract class CopyResourcesFromKLibsTask : DefaultTask() {
             outputDir: File
         ) {
             linkTask.klibs
-                .filter { it.extension == "klib" }
+                .filter {
+                    it.extension == "klib" ||
+                        it.resolve("default/resources").isDirectory
+                }
                 .filter { it.exists() }
                 .forEach { inputFile ->
                     println("copy resources from $inputFile into $outputDir")
