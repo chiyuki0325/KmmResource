@@ -45,7 +45,7 @@ fun NSBundle.Companion.loadableBundle(identifier: String): NSBundle {
 
 private fun loadBundle(identifier: String): NSBundle? {
     val bundlePath: String =
-        if (isDemoTest) NSBundle.mainBundle.bundlePath else kmmBundle?.bundlePath ?: return null
+        if (isDemoTest) NSBundle.mainBundle.bundlePath else kmmBundle?.bundlePath ?: NSBundle.mainBundle.bundlePath
 
     val enumerator: NSDirectoryEnumerator = requireNotNull(
         NSFileManager.defaultManager.enumeratorAtPath(bundlePath)
