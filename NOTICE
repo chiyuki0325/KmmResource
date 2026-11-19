@@ -1,0 +1,13 @@
+NEUPass-maintained KmmResource
+
+Derived from the KmmResource subtree of Tencent-TDS/KuiklyBase-components:
+https://github.com/Tencent-TDS/KuiklyBase-components/tree/master/KmmResource
+
+Copyright (C) 2025 Tencent.
+Includes code derived from moko-resources, Copyright 2019 IceRock MAG Inc.
+Licensed under the Apache License, Version 2.0. See LICENSE for the upstream
+license text and third-party attributions.
+
+This fork includes modifications by NEUPass contributors for JVM Desktop,
+Android, Apple and OpenHarmony resource support, generation and packaging.
+The repository history records the individual modifications and their authors.
